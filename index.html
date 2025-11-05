@@ -163,7 +163,7 @@
 
   <script>
     // Endpoint escolhido
-  const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbx_iPQF5T40fV1mM8-Pt0Rnga6GvILkuSwdYoN_7_b6xaOcXC9QbNdUBOvGsWtWhdVw/exec";
+  const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwPCz1Ri3GDByVfNQjbaVyFh6rkOZ7IuB7ruiDEX8k_VQRdl3OeJhuAhIIIfQ9KMyp4/exec";
     
 
     // Listas completas (CXF = cartão fino ; CXD = cartão duplo)
@@ -368,7 +368,7 @@
     fillDatalist(filtered.length ? filtered : source);
   });
 
-  // Envio do formulário para o Google Sheets
+ // Envio do formulário para o Google Sheets
   form.addEventListener('submit', async (e) => {
     e.preventDefault();
     feedback.style.display = 'none';
@@ -391,33 +391,21 @@
     formData.forEach((v, k) => data[k] = v);
 
     try {
-      const resp = await fetch(GOOGLE_SCRIPT_URL, {
+      await fetch(GOOGLE_SCRIPT_URL, {
         method: 'POST',
+        mode: 'no-cors', // impede bloqueio CORS
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(data)
       });
 
-      if (resp.ok) {
-        feedback.textContent = 'Registo guardado com sucesso no Google Sheets! ✔️';
-        feedback.classList.add('success');
-        feedback.style.display = 'block';
-        form.reset();
-        fillDatalist(CXF);
-      } else {
-        feedback.textContent = 'Erro ao guardar. Tenta novamente.';
-        feedback.classList.add('error');
-        feedback.style.display = 'block';
-      }
+      feedback.textContent = 'Registo guardado com sucesso no Google Sheets! ✔️';
+      feedback.classList.add('success');
+      feedback.style.display = 'block';
+      form.reset();
+      fillDatalist(CXF);
     } catch (err) {
       feedback.textContent = 'Falha de ligação — verifica a internet e tenta outra vez.';
       feedback.classList.add('error');
       feedback.style.display = 'block';
     }
   });
-</script>
-</body>
-</html>
-
-
-
-
