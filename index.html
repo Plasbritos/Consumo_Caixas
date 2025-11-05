@@ -76,7 +76,7 @@
   <div class="container">
     <header>
       <h1>Registo de Consumo de Caixas</h1>
-      <p>Preenche este formulário sempre que usares caixas. Enviaremos a informação por email para o responsável.</p>
+      <p>Preenche este formulário sempre que usares caixas. Os dados serão guardados automaticamente no Google Sheets.</p>
     </header>
 
     <form id="boxForm">
@@ -163,7 +163,8 @@
 
   <script>
     // Endpoint escolhido
-    const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwjKzFCZV-aL_pc6I29Xn7LoDiz5JaV2ITdH44IbRj3NkuMSlKZll2I2BM9veXEx3Wd/exec"; // substitui com o URL do Apps Script
+    const FORMSPREE_ENDPOINT = "https://script.google.com/macros/s/AKfycbwjKzFCZV-aL_pc6I29Xn7LoDiz5JaV2ITdH44IbRj3NkuMSlKZll2I2BM9veXEx3Wd/exec";
+    
 
     // Listas completas (CXF = cartão fino ; CXD = cartão duplo)
     const CXF = [
@@ -325,108 +326,94 @@
 "CXD.085 – Caixa cartao duplo 83x37x7,5"
     ];
 
-    // DOM refs
-    const medidasList = document.getElementById('medidasList');
-    const tipoRadios = document.getElementsByName('Tipo de Caixa');
-    const medidaInput = document.getElementById('measure');
-    const form = document.getElementById('boxForm');
-    const feedback = document.getElementById('feedback');
+  const medidasList = document.getElementById('medidasList');
+  const tipoRadios = document.getElementsByName('Tipo de Caixa');
+  const medidaInput = document.getElementById('measure');
+  const form = document.getElementById('boxForm');
+  const feedback = document.getElementById('feedback');
 
-    // Utility: fills datalist with given array (option values)
-    function fillDatalist(arr) {
-      medidasList.innerHTML = '';
-      const frag = document.createDocumentFragment();
-      arr.forEach(item => {
-        const opt = document.createElement('option');
-        opt.value = item;
-        frag.appendChild(opt);
-      });
-      medidasList.appendChild(frag);
-    }
-
-    // Set initial list to CXF (cartão fino) by default
-    fillDatalist(CXF);
-
-    // Listen for changes in Tipo de Caixa radios
-    tipoRadios.forEach(r => {
-      r.addEventListener('change', () => {
-        if (r.checked) {
-          if (r.value === 'Cartão fino') fillDatalist(CXF);
-          else fillDatalist(CXD);
-          // clear current input to avoid mismatch
-          medidaInput.value = '';
-          medidaInput.focus();
-        }
-      });
+  function fillDatalist(arr) {
+    medidasList.innerHTML = '';
+    const frag = document.createDocumentFragment();
+    arr.forEach(item => {
+      const opt = document.createElement('option');
+      opt.value = item;
+      frag.appendChild(opt);
     });
+    medidasList.appendChild(frag);
+  }
 
-    // Optional: simple inline filtering as the user types (improves datalist UX in some browsers)
-    medidaInput.addEventListener('input', (e) => {
-      const val = e.target.value.toLowerCase().trim();
-      // choose source based on selected type
-      const selectedType = Array.from(tipoRadios).find(r=>r.checked)?.value || 'Cartão fino';
-      const source = (selectedType === 'Cartão fino') ? CXF : CXD;
-      if (!val) {
-        fillDatalist(source);
-        return;
+  fillDatalist(CXF);
+
+  tipoRadios.forEach(r => {
+    r.addEventListener('change', () => {
+      if (r.checked) {
+        if (r.value === 'Cartão fino') fillDatalist(CXF);
+        else fillDatalist(CXD);
+        medidaInput.value = '';
+        medidaInput.focus();
       }
-      const filtered = source.filter(item => item.toLowerCase().includes(val) || item.toLowerCase().startsWith(val));
-      // if nothing matches, keep full list but allow free text entry
-      fillDatalist(filtered.length ? filtered : source);
     });
-
-    // Form submission via fetch to Formspree
-    form.addEventListener('submit', async (e) => {
-      e.preventDefault();
-      feedback.style.display = 'none';
-      feedback.className = 'msg';
-
-      // Basic validation: ensure medida not empty
-      if (!medidaInput.value.trim()) {
-        feedback.textContent = 'Por favor indica a medida da caixa.';
-        feedback.classList.add('error');
-        feedback.style.display = 'block';
-        return;
-      }
-
-      // Collect data
-      const formData = new FormData(form);
-      // subject to help inbox triage
-      const nome = formData.get('Nome do Funcionário') || '—';
-      const medida = formData.get('Medida') || '—';
-      const quantidade = formData.get('Quantidade') || '—';
-      formData.append('_subject', `[Consumo Caixas] ${nome} — ${medida} (${quantidade})`);
-
-      // Convert to JSON
-      const data = {};
-      formData.forEach((v,k)=> data[k]=v);
-
-try {
-  const resp = await fetch(GOOGLE_SCRIPT_URL, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(data)
   });
 
-  if (resp.ok) {
-    feedback.textContent = 'Registo guardado com sucesso no Google Sheets! ✔️';
-    feedback.classList.add('success');
-    feedback.style.display = 'block';
-    form.reset();
-    fillDatalist(CXF);
-  } else {
-    feedback.textContent = 'Erro ao guardar. Tenta novamente.';
-    feedback.classList.add('error');
-    feedback.style.display = 'block';
-  }
-} catch (err) {
-  feedback.textContent = 'Falha de ligação — verifica a internet e tenta outra vez.';
-  feedback.classList.add('error');
-  feedback.style.display = 'block';
-}
+  medidaInput.addEventListener('input', (e) => {
+    const val = e.target.value.toLowerCase().trim();
+    const selectedType = Array.from(tipoRadios).find(r => r.checked)?.value || 'Cartão fino';
+    const source = (selectedType === 'Cartão fino') ? CXF : CXD;
+    if (!val) {
+      fillDatalist(source);
+      return;
+    }
+    const filtered = source.filter(item => item.toLowerCase().includes(val) || item.toLowerCase().startsWith(val));
+    fillDatalist(filtered.length ? filtered : source);
+  });
 
-    });
-  </script>
+  // Envio do formulário para o Google Sheets
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    feedback.style.display = 'none';
+    feedback.className = 'msg';
+
+    if (!medidaInput.value.trim()) {
+      feedback.textContent = 'Por favor indica a medida da caixa.';
+      feedback.classList.add('error');
+      feedback.style.display = 'block';
+      return;
+    }
+
+    const formData = new FormData(form);
+    const nome = formData.get('Nome do Funcionário') || '—';
+    const medida = formData.get('Medida') || '—';
+    const quantidade = formData.get('Quantidade') || '—';
+    formData.append('_subject', `[Consumo Caixas] ${nome} — ${medida} (${quantidade})`);
+
+    const data = {};
+    formData.forEach((v, k) => data[k] = v);
+
+    try {
+      const resp = await fetch(GOOGLE_SCRIPT_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data)
+      });
+
+      if (resp.ok) {
+        feedback.textContent = 'Registo guardado com sucesso no Google Sheets! ✔️';
+        feedback.classList.add('success');
+        feedback.style.display = 'block';
+        form.reset();
+        fillDatalist(CXF);
+      } else {
+        feedback.textContent = 'Erro ao guardar. Tenta novamente.';
+        feedback.classList.add('error');
+        feedback.style.display = 'block';
+      }
+    } catch (err) {
+      feedback.textContent = 'Falha de ligação — verifica a internet e tenta outra vez.';
+      feedback.classList.add('error');
+      feedback.style.display = 'block';
+    }
+  });
+</script>
 </body>
 </html>
-
