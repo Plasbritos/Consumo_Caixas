@@ -1,0 +1,431 @@
+<!doctype html>
+<html lang="pt-PT">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Registo de Consumo de Caixas — Plasbritos</title>
+  <style>
+    :root{
+      --bg:#f6f7fb;
+      --card:#ffffff;
+      --accent:#0f62fe;
+      --muted:#666;
+      --success:#0b9e5a;
+    }
+    body{
+      font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+      background:var(--bg);
+      margin:0;
+      padding:20px;
+      display:flex;
+      align-items:flex-start;
+      justify-content:center;
+      min-height:100vh;
+      color:#111;
+    }
+    .container{
+      width:100%;
+      max-width:1000px;
+      background:var(--card);
+      padding:20px;
+      border-radius:12px;
+      box-shadow:0 6px 22px rgba(17,17,17,0.06);
+    }
+    header h1{ margin:0 0 6px 0; font-size:28px; }
+    header p{ margin:0 0 16px 0; color:var(--muted); font-size:15px; }
+
+    form{ display:grid; gap:20px; }
+    .row{ display:flex; gap:12px; }
+    .col{ flex:1; min-width:0; display:flex; flex-direction:column; gap:6px;}
+    label{ font-size:13px; color:#222; }
+    input[type="text"], input[type="number"], select, textarea{
+      border:1px solid #e2e6ef;
+      padding:10px 12px;
+      border-radius:8px;
+      font-size:16px;
+      background:#fff;
+      box-sizing:border-box;
+    }
+    input[type="number"]{ width:150px; }
+    .small { font-size:12px; color:var(--muted); }
+
+    .radio-group{ display:flex; gap:20px; align-items:center; flex-wrap:wrap;}
+    .radio{
+      display:flex; align-items:center; gap:15px; padding:12px 20px;
+      border:1px solid #e6e9f2; border-radius:12px; cursor:pointer;
+      user-select:none;
+    }
+    .radio input{ accent-color: var(--accent); transform:scale(1.05); }
+    button{
+      background:var(--accent); color:white; border:0; padding:12px 18px; border-radius:10px;
+      font-weight:600; cursor:pointer;
+    }
+    .note{ font-size:13px; color:var(--muted); margin-top:6px; }
+
+    .msg{ padding:10px 12px; border-radius:8px; font-weight:600; display:none; }
+    .msg.success{ background:#e6fbf1; color:var(--success); border:1px solid rgba(11,158,90,0.12); display:block; }
+    .msg.error{ background:#fff2f0; color:#b02a37; border:1px solid rgba(176,42,55,0.08); display:block; }
+
+    @media (max-width:700px){
+      .row{ flex-direction:column; }
+      input[type="number"]{ width:100%; }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>Registo de Consumo de Caixas</h1>
+      <p>Preenche este formulário sempre que usares caixas. Enviaremos a informação por email para o responsável.</p>
+    </header>
+
+    <form id="boxForm">
+      <div class="row">
+        <div class="col">
+          <label for="employeeName">Nome do Funcionário</label>
+          <select id="employeeName" name="Nome do Funcionário" required>
+            <option value="" disabled selected>Seleciona o funcionário</option>
+            <option value="Manuel Brito">Manuel Brito</option>
+            <option value="Jorge Brito">Jorge Brito</option>
+            <option value="Carlos Silva">Carlos Silva</option>
+            <option value="Antonino Faria">Antonino Faria</option>
+            <option value="Antonino Faria">Antonino Faria</option>
+            <option value="Ivan Lysyi">Ivan Lysyi</option>
+            <option value="José Lamela">José Lamela</option>
+            <option value="André Duarte">André Duarte</option>
+            <option value="Sérgio Araújo">Sérgio Araújo</option>
+            <option value="Bruno Andrade">Bruno Andrade</option>
+            <option value="André Ferreira">André Ferreira</option>
+            <option value="Nelson Silva">Nelson Silva</option>
+            <option value="João Cunha">João Cunha</option>
+            <option value="Filipe Silva">Filipe Silva</option>
+            <option value="Tiago Silva">Tiago Silva</option>
+            <option value="Joel Araújo">Joel Araújo</option>
+            <option value="Francisco Costa">Francisco Costa</option>
+            <option value="Joel Silva">Joel Silva</option>
+            <option value="Pedro Cortez">Pedro Cortez</option>
+            <option value="Manuel Silva">Manuel Silva</option>
+            <option value="Bruno Costa">Bruno Costa</option>
+            <option value="Hélder Pereira">Hélder Pereira</option>
+            <option value="Diogo Loureiro">Diogo Loureiro</option>
+            <option value="Marco Gomes">Marco Gomes</option>
+            <option value="Henrique Maciel">Henrique Maciel</option>
+          </select>
+        </div>
+
+        <div class="col">
+          <label for="setor">Setor</label>
+          <select id="setor" name="Setor" required>
+            <option value="" disabled selected>Escolhe o setor</option>
+            <option>Impressão</option>
+            <option>Corte</option>
+            <option>Bobinagem</option>
+          </select>
+        </div>
+      </div>
+
+      <div>
+        <label>Tipo de Caixa</label>
+        <div class="radio-group" role="radiogroup" aria-label="Tipo de caixa">
+          <label class="radio"><input type="radio" name="Tipo de Caixa" value="Cartão fino" required> <span>Caixa cartão fino</span></label>
+          <label class="radio"><input type="radio" name="Tipo de Caixa" value="Cartão duplo"> <span>Caixa cartão duplo</span></label>
+        </div>
+        <div class="small">Escolhe o tipo de caixa usado. A lista de medidas irá actualizar automaticamente.</div>
+      </div>
+
+      <div class="row">
+        <div class="col">
+          <label for="measure">Medida (procura por código ou descrição)</label>
+          <input id="measure" name="Medida" type="text" placeholder="Escreve para filtrar ou escolhe da lista" autocomplete="off" required list="medidasList" />
+          <datalist id="medidasList"></datalist>
+          <div class="small">Podes escrever livremente se a medida não estiver na lista.</div>
+        </div>
+
+        <div class="col">
+          <label for="quantity">Quantidade gasta</label>
+          <input id="quantity" name="Quantidade" type="number" min="1" placeholder="Ex.: 10" required />
+        </div>
+      </div>
+
+      <div>
+        <label for="notes">Associar a Encomenda (opcional)</label>
+        <textarea id="notes" name="Associar a Encomenda" rows="4" placeholder="Ex.: Ficha de produção 2025/**** ou Ordem de fabrico 2025.**** com *** un."></textarea>
+      </div>
+
+      <div style="display:flex;gap:12px;align-items:center;margin-top:6px;">
+        <button type="submit">Registar Consumo</button>
+        <div id="feedback" class="msg" aria-live="polite"></div>
+      </div>
+
+      <p class="note">Ao submeter, os dados serão enviados por email ao responsável.</p>
+    </form>
+  </div>
+
+  <script>
+    // Endpoint escolhido
+    const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyyTXtb5qdtZUe0igMeHIT4JK94ps33X-PzarJJPVGRzoEo_alnT4TZ3iyzxsShJQEe/exec"; // substitui com o URL do Apps Script
+
+    // Listas completas (CXF = cartão fino ; CXD = cartão duplo)
+    const CXF = [
+"CXF.030 – Caixa cartao fino 12x12x20",
+"CXF.031 – Caixa cartao fino 12x12x24,5",
+"CXF.000 – Caixa cartao fino 13x11x13,5",
+"CXF.057 – Caixa cartao fino 16x16x33",
+"CXF.056 – Caixa cartao fino 17x13x7",
+"CXF.058 – Caixa cartao fino 20x20x20,5",
+"CXF.029 – Caixa cartao fino 21x21x20",
+"CXF.033 – Caixa cartao fino 21x21x25",
+"CXF.038 – Caixa cartao fino 21x21x30",
+"CXF.040 – Caixa cartao fino 21x21x32",
+"CXF.055 – Caixa cartao fino 22x10x8,5",
+"CXF.001 – Caixa cartao fino 22x14,5x4",
+"CXF.044 – Caixa cartao fino 22x19x9",
+"CXF.032 – Caixa cartao fino 22x22x25",
+"CXF.050 – Caixa cartao fino 22x22x30",
+"CXF.051 – Caixa cartao fino 23,5x23,5x15",
+"CXF.037 – Caixa cartao fino 23,5x23,5x20,5",
+"CXF.034 – Caixa cartao fino 23,5x23,5x24",
+"CXF.039 – Caixa cartao fino 23,5x23,5x28",
+"CXF.026 – Caixa cartao fino 23x15x9",
+"CXF.035 – Caixa cartao fino 27,5x27,5x20",
+"CXF.041 – Caixa cartao fino 27x13,5x7",
+"CXF.042 – Caixa cartao fino 27x13,5x8",
+"CXF.002 – Caixa cartao fino 27x15x7,5",
+"CXF.003 – Caixa cartao fino 27x17,5x9,5",
+"CXF.043 – Caixa cartao fino 30x26x9",
+"CXF.048 – Caixa cartao fino 30x28x21",
+"CXF.004 – Caixa cartao fino 31x21x10",
+"CXF.005 – Caixa cartao fino 31x26x16",
+"CXF.052 – Caixa cartao fino 33x19,5x10",
+"CXF.006 – Caixa cartao fino 35x23x11",
+"CXF.007 – Caixa cartao fino 36,5x26x11",
+"CXF.008 – Caixa cartao fino 36x26x14",
+"CXF.046 – Caixa cartao fino 39x29x11,5",
+"CXF.009 – Caixa cartao fino 41x36x11",
+"CXF.010 – Caixa cartao fino 42x26x11",
+"CXF.011 – Caixa cartao fino 42x29x11",
+"CXF.012 – Caixa cartao fino 42x31x11",
+"CXF.013 – Caixa cartao fino 42x33x11",
+"CXF.027 – Caixa cartao fino 44x31x11",
+"CXF.014 – Caixa cartao fino 46,5x31x11",
+"CXF.015 – Caixa cartao fino 46,5x33,5x11",
+"CXF.016 – Caixa cartao fino 46,5x36x11",
+"CXF.017 – Caixa cartao fino 47x26x11",
+"CXF.018 – Caixa cartao fino 47x29x11",
+"CXF.019 – Caixa cartao fino 49x28,5x11",
+"CXF.020 – Caixa cartao fino 49x31x11",
+"CXF.021 – Caixa cartao fino 49x34x11",
+"CXF.047 – Caixa cartao fino 50x32x9",
+"CXF.049 – Caixa cartao fino 52x28,5x11",
+"CXF.022 – Caixa cartao fino 52x31x11",
+"CXF.023 – Caixa cartao fino 52x33x11",
+"CXF.028 – Caixa cartao fino 52x36x11",
+"CXF.024 – Caixa cartao fino 56x36x11",
+"CXF.045 – Caixa cartao fino 56x40x13",
+"CXF.025 – Caixa cartao fino 62x37x10",
+"CXF.036 – Caixa cartao fino 67x46x7",
+"CXF.053 – Caixa cartao fino 8x21x8,5",
+"CXF.054 – Caixa cartao fino 8x24x8,5"
+    ];
+
+    const CXD = [
+"CXD.053 – Caixa cartao duplo 23,5x14,5x9,5",
+"CXD.000 – Caixa cartao duplo 24x22x8,5",
+"CXD.075 – Caixa cartao duplo 27x13,5x9,5",
+"CXD.001 – Caixa cartao duplo 27x17,5x9,5",
+"CXD.076 – Caixa cartao duplo 28x18x7,5",
+"CXD.002 – Caixa cartao duplo 28x18x8,5",
+"CXD.003 – Caixa cartao duplo 29x17,5x9,5",
+"CXD.087 – Caixa cartao duplo 32x18x5",
+"CXD.004 – Caixa cartao duplo 32x19,5x9,5",
+"CXD.005 – Caixa cartao duplo 32x20x8,5",
+"CXD.006 – Caixa cartao duplo 32x22x9,5",
+"CXD.070 – Caixa cartao duplo 33x29x7,5",
+"CXD.071 – Caixa cartao duplo 34x19,5x8,5",
+"CXD.059 – Caixa cartao duplo 35,5x23,5x9,5",
+"CXD.092 – Caixa cartao duplo 35x31x10",
+"CXD.007 – Caixa cartao duplo 36x30x9",
+"CXD.008 – Caixa cartao duplo 36x35x11",
+"CXD.043 – Caixa cartao duplo 37x22x5",
+"CXD.057 – Caixa cartao duplo 37x22x9,5",
+"CXD.054 – Caixa cartao duplo 37x31x9",
+"CXD.009 – Caixa cartao duplo 39x26x12,5",
+"CXD.058 – Caixa cartao duplo 39x26x6",
+"CXD.010 – Caixa cartao duplo 39x35,5x11",
+"CXD.011 – Caixa cartao duplo 40x25x11",
+"CXD.012 – Caixa cartao duplo 40x25x7,5",
+"CXD.013 – Caixa cartao duplo 40x25x8,5",
+"CXD.089 – Caixa cartao duplo 40x27x7,5",
+"CXD.014 – Caixa cartao duplo 40x30x11",
+"CXD.015 – Caixa cartao duplo 40x39x11",
+"CXD.016 – Caixa cartao duplo 42x27x8,5",
+"CXD.017 – Caixa cartao duplo 42x27x9,5",
+"CXD.083 – Caixa cartao duplo 42x32x5",
+"CXD.018 – Caixa cartao duplo 43,5x28,5x9,5",
+"CXD.019 – Caixa cartao duplo 43x34x11",
+"CXD.021 – Caixa cartao duplo 44x27x11",
+"CXD.022 – Caixa cartao duplo 44x28,5x11",
+"CXD.020 – Caixa cartao duplo 44x36x10",
+"CXD.068 – Caixa cartao duplo 45x44x11",
+"CXD.023 – Caixa cartao duplo 46x36x11",
+"CXD.024 – Caixa cartao duplo 47x29x11",
+"CXD.025 – Caixa cartao duplo 47x31x11",
+"CXD.026 – Caixa cartao duplo 47x32x7,5",
+"CXD.027 – Caixa cartao duplo 47x32x9,5",
+"CXD.050 – Caixa cartao duplo 48x32x10",
+"CXD.028 – Caixa cartao duplo 49x25x7,5",
+"CXD.044 – Caixa cartao duplo 49x34x5",
+"CXD.067 – Caixa cartao duplo 50x29x11",
+"CXD.051 – Caixa cartao duplo 50x31x6",
+"CXD.029 – Caixa cartao duplo 50x34,5x10",
+"CXD.072 – Caixa cartao duplo 50x34,5x11",
+"CXD.030 – Caixa cartao duplo 50x34x7,5",
+"CXD.031 – Caixa cartao duplo 50x34x8,5",
+"CXD.049 – Caixa cartao duplo 50x36x7,5",
+"CXD.032 – Caixa cartao duplo 50x37x10",
+"CXD.065 – Caixa cartao duplo 52x25x11",
+"CXD.064 – Caixa cartao duplo 52x27x11",
+"CXD.045 – Caixa cartao duplo 52x32x11",
+"CXD.033 – Caixa cartao duplo 52x36x10",
+"CXD.074 – Caixa cartao duplo 52x37x7,5",
+"CXD.034 – Caixa cartao duplo 52x37x9,5",
+"CXD.035 – Caixa cartao duplo 52x42x8,5",
+"CXD.052 – Caixa cartao duplo 53,5x33x5",
+"CXD.069 – Caixa cartao duplo 53x25x7,5",
+"CXD.062 – Caixa cartao duplo 53x27x9",
+"CXD.082 – Caixa cartao duplo 53x32x5",
+"CXD.091 – Caixa cartao duplo 53x42x10",
+"CXD.080 – Caixa cartao duplo 53x42x5",
+"CXD.047 – Caixa cartao duplo 55x36x5",
+"CXD.060 – Caixa cartao duplo 55x36x7,5",
+"CXD.055 – Caixa cartao duplo 56,5x35x6",
+"CXD.084 – Caixa cartao duplo 56,5x47x7,5",
+"CXD.086 – Caixa cartao duplo 57,5x37x5",
+"CXD.036 – Caixa cartao duplo 57x34x8",
+"CXD.063 – Caixa cartao duplo 57x38x11",
+"CXD.037 – Caixa cartao duplo 57x42x7,5",
+"CXD.038 – Caixa cartao duplo 57x42x8,5",
+"CXD.061 – Caixa cartao duplo 57x46x8,5",
+"CXD.048 – Caixa cartao duplo 59x38x5",
+"CXD.090 – Caixa cartao duplo 60x38x10",
+"CXD.073 – Caixa cartao duplo 60x40x30",
+"CXD.077 – Caixa cartao duplo 60x40x40",
+"CXD.066 – Caixa cartao duplo 62x27x11",
+"CXD.039 – Caixa cartao duplo 62x42x7",
+"CXD.081 – Caixa cartao duplo 63x42x9",
+"CXD.056 – Caixa cartao duplo 66x21x11",
+"CXD.040 – Caixa cartao duplo 68x43x7,5",
+"CXD.041 – Caixa cartao duplo 68x53x7,5",
+"CXD.088 – Caixa cartao duplo 69x46x5",
+"CXD.042 – Caixa cartao duplo 72x37x10",
+"CXD.046 – Caixa cartao duplo 72x42x5",
+"CXD.078 – Caixa cartao duplo 72x54x10",
+"CXD.079 – Caixa cartao duplo 72x59x10",
+"CXD.093 – Caixa cartao duplo 80x55x10",
+"CXD.085 – Caixa cartao duplo 83x37x7,5"
+    ];
+
+    // DOM refs
+    const medidasList = document.getElementById('medidasList');
+    const tipoRadios = document.getElementsByName('Tipo de Caixa');
+    const medidaInput = document.getElementById('measure');
+    const form = document.getElementById('boxForm');
+    const feedback = document.getElementById('feedback');
+
+    // Utility: fills datalist with given array (option values)
+    function fillDatalist(arr) {
+      medidasList.innerHTML = '';
+      const frag = document.createDocumentFragment();
+      arr.forEach(item => {
+        const opt = document.createElement('option');
+        opt.value = item;
+        frag.appendChild(opt);
+      });
+      medidasList.appendChild(frag);
+    }
+
+    // Set initial list to CXF (cartão fino) by default
+    fillDatalist(CXF);
+
+    // Listen for changes in Tipo de Caixa radios
+    tipoRadios.forEach(r => {
+      r.addEventListener('change', () => {
+        if (r.checked) {
+          if (r.value === 'Cartão fino') fillDatalist(CXF);
+          else fillDatalist(CXD);
+          // clear current input to avoid mismatch
+          medidaInput.value = '';
+          medidaInput.focus();
+        }
+      });
+    });
+
+    // Optional: simple inline filtering as the user types (improves datalist UX in some browsers)
+    medidaInput.addEventListener('input', (e) => {
+      const val = e.target.value.toLowerCase().trim();
+      // choose source based on selected type
+      const selectedType = Array.from(tipoRadios).find(r=>r.checked)?.value || 'Cartão fino';
+      const source = (selectedType === 'Cartão fino') ? CXF : CXD;
+      if (!val) {
+        fillDatalist(source);
+        return;
+      }
+      const filtered = source.filter(item => item.toLowerCase().includes(val) || item.toLowerCase().startsWith(val));
+      // if nothing matches, keep full list but allow free text entry
+      fillDatalist(filtered.length ? filtered : source);
+    });
+
+    // Form submission via fetch to Formspree
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      feedback.style.display = 'none';
+      feedback.className = 'msg';
+
+      // Basic validation: ensure medida not empty
+      if (!medidaInput.value.trim()) {
+        feedback.textContent = 'Por favor indica a medida da caixa.';
+        feedback.classList.add('error');
+        feedback.style.display = 'block';
+        return;
+      }
+
+      // Collect data
+      const formData = new FormData(form);
+      // subject to help inbox triage
+      const nome = formData.get('Nome do Funcionário') || '—';
+      const medida = formData.get('Medida') || '—';
+      const quantidade = formData.get('Quantidade') || '—';
+      formData.append('_subject', `[Consumo Caixas] ${nome} — ${medida} (${quantidade})`);
+
+      // Convert to JSON
+      const data = {};
+      formData.forEach((v,k)=> data[k]=v);
+
+try {
+  const resp = await fetch(GOOGLE_SCRIPT_URL, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(data)
+  });
+
+  if (resp.ok) {
+    feedback.textContent = 'Registo guardado com sucesso no Google Sheets! ✔️';
+    feedback.classList.add('success');
+    feedback.style.display = 'block';
+    form.reset();
+    fillDatalist(CXF);
+  } else {
+    feedback.textContent = 'Erro ao guardar. Tenta novamente.';
+    feedback.classList.add('error');
+    feedback.style.display = 'block';
+  }
+} catch (err) {
+  feedback.textContent = 'Falha de ligação — verifica a internet e tenta outra vez.';
+  feedback.classList.add('error');
+  feedback.style.display = 'block';
+}
+
+    });
+  </script>
+</body>
+</html>
