@@ -325,91 +325,89 @@
 "CXD.093 – Caixa cartao duplo 80x55x10",
 "CXD.085 – Caixa cartao duplo 83x37x7,5"
     ];
+<script>
+const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwPnnXA_ehQp2-gyqAlsso3wv2Og4zGIqtoW_irT-vTIl_R557JwIYYH7Ys0iQAW3H7/exec";
 
-    // Refs
-    const medidasList = document.getElementById('medidasList');
-    const tipoRadios = document.getElementsByName('Tipo de Caixa');
-    const medidaInput = document.getElementById('measure');
-    const form = document.getElementById('boxForm');
-    const feedback = document.getElementById('feedback');
+const medidasList = document.getElementById('medidasList');
+const tipoRadios = document.getElementsByName('Tipo de Caixa');
+const medidaInput = document.getElementById('measure');
+const form = document.getElementById('boxForm');
+const feedback = document.getElementById('feedback');
 
-    // Função para preencher lista
-    function fillDatalist(arr) {
-      medidasList.innerHTML = '';
-      arr.forEach(item => {
-        const opt = document.createElement('option');
-        opt.value = item;
-        medidasList.appendChild(opt);
-      });
+function fillDatalist(arr) {
+  medidasList.innerHTML = '';
+  const frag = document.createDocumentFragment();
+  arr.forEach(item => {
+    const opt = document.createElement('option');
+    opt.value = item;
+    frag.appendChild(opt);
+  });
+  medidasList.appendChild(frag);
+}
+
+fillDatalist(CXF);
+
+tipoRadios.forEach(r => {
+  r.addEventListener('change', () => {
+    if (r.checked) {
+      if (r.value === 'Cartão fino') fillDatalist(CXF);
+      else fillDatalist(CXD);
+      medidaInput.value = '';
+      medidaInput.focus();
     }
-
-    // Preencher lista inicial
-    fillDatalist(CXF);
-
-    // Mudar lista ao trocar tipo
-    tipoRadios.forEach(r => {
-      r.addEventListener('change', () => {
-        if (r.checked) {
-          if (r.value === 'Cartão fino') fillDatalist(CXF);
-          else fillDatalist(CXD);
-          medidaInput.value = '';
-          medidaInput.focus();
-        }
-      });
-    });
-
-    // Filtragem conforme digita
-    medidaInput.addEventListener('input', e => {
-      const val = e.target.value.toLowerCase();
-      const tipo = Array.from(tipoRadios).find(r => r.checked)?.value;
-      const lista = tipo === 'Cartão fino' ? CXF : CXD;
-      const filtrada = lista.filter(i => i.toLowerCase().includes(val));
-      fillDatalist(filtrada.length ? filtrada : lista);
-    });
-
-    // Submeter formulário
-    form.addEventListener('submit', async e => {
-      e.preventDefault();
-      feedback.style.display = 'none';
-      feedback.className = 'msg';
-
-      const formData = new FormData(form);
-      const data = {};
-      formData.forEach((v, k) => data[k] = v);
-
-      try {
-const resp = await fetch(GOOGLE_SCRIPT_URL, {
-  method: 'POST',
-  mode: 'no-cors',
-  headers: { 'Content-Type': 'application/json' },
-  body: JSON.stringify(data)
+  });
 });
 
-        if (resp.ok) {
-feedback.textContent = 'Registo enviado! ✔️ (a confirmar no Google Sheets)';
-feedback.classList.add('success');
-feedback.style.display = 'block';
-form.reset();
-          fillDatalist(CXF);
-        } else {
-          feedback.textContent = '⚠️ Erro ao guardar. Tenta novamente.';
-          feedback.classList.add('error');
-          feedback.style.display = 'block';
-        }
-      } catch (err) {
-        console.error(err);
-        feedback.textContent = '❌ Falha de ligação — verifica a internet.';
-        feedback.classList.add('error');
-        feedback.style.display = 'block';
-      }
+medidaInput.addEventListener('input', (e) => {
+  const val = e.target.value.toLowerCase().trim();
+  const selectedType = Array.from(tipoRadios).find(r => r.checked)?.value || 'Cartão fino';
+  const source = (selectedType === 'Cartão fino') ? CXF : CXD;
+  if (!val) {
+    fillDatalist(source);
+    return;
+  }
+  const filtered = source.filter(item => item.toLowerCase().includes(val) || item.toLowerCase().startsWith(val));
+  fillDatalist(filtered.length ? filtered : source);
+});
+
+// Envio do formulário para o Google Sheets
+form.addEventListener('submit', async (e) => {
+  e.preventDefault();
+  feedback.style.display = 'none';
+  feedback.className = 'msg';
+
+  if (!medidaInput.value.trim()) {
+    feedback.textContent = 'Por favor indica a medida da caixa.';
+    feedback.classList.add('error');
+    feedback.style.display = 'block';
+    return;
+  }
+
+  const formData = new FormData(form);
+  const data = {};
+  formData.forEach((v, k) => data[k] = v);
+
+  try {
+    await fetch(GOOGLE_SCRIPT_URL, {
+      method: 'POST',
+      mode: 'no-cors',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(data)
     });
-  </script>
-</body>
-</html>
 
+    feedback.textContent = '✔️ Registo enviado com sucesso (a confirmar no Google Sheets).';
+    feedback.classList.add('success');
+    feedback.style.display = 'block';
+    form.reset();
+    fillDatalist(CXF);
 
-
-
+  } catch (err) {
+    feedback.textContent = '❌ Falha de ligação — verifica a internet e tenta outra vez.';
+    feedback.classList.add('error');
+    feedback.style.display = 'block';
+  }
+});
+</script>
 
 
 
