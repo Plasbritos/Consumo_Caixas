@@ -378,17 +378,18 @@
       formData.forEach((v, k) => data[k] = v);
 
       try {
-        const resp = await fetch(GOOGLE_SCRIPT_URL, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(data)
-        });
+const resp = await fetch(GOOGLE_SCRIPT_URL, {
+  method: 'POST',
+  mode: 'no-cors',
+  headers: { 'Content-Type': 'application/json' },
+  body: JSON.stringify(data)
+});
 
         if (resp.ok) {
-          feedback.textContent = '✔️ Registo guardado com sucesso no Google Sheets!';
-          feedback.classList.add('success');
-          feedback.style.display = 'block';
-          form.reset();
+feedback.textContent = 'Registo enviado! ✔️ (a confirmar no Google Sheets)';
+feedback.classList.add('success');
+feedback.style.display = 'block';
+form.reset();
           fillDatalist(CXF);
         } else {
           feedback.textContent = '⚠️ Erro ao guardar. Tenta novamente.';
@@ -405,6 +406,7 @@
   </script>
 </body>
 </html>
+
 
 
 
