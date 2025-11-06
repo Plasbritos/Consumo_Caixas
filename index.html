@@ -1,71 +1,81 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="pt-PT">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Registo de Consumo de Caixas</title>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Registo de Consumo de Caixas — Plasbritos</title>
   <style>
-    body {
-      font-family: Arial, sans-serif;
-      background: #f7f7f7;
-      padding: 20px;
-      color: #333;
+    :root{
+      --bg:#f6f7fb;
+      --card:#ffffff;
+      --accent:#0f62fe;
+      --muted:#666;
+      --success:#0b9e5a;
     }
-    h1 {
-      text-align: center;
-      color: #1a4a8a;
+    body{
+      font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+      background:var(--bg);
+      margin:0;
+      padding:20px;
+      display:flex;
+      align-items:flex-start;
+      justify-content:center;
+      min-height:100vh;
+      color:#111;
     }
-    form {
-      background: white;
-      max-width: 600px;
-      margin: 0 auto;
-      padding: 20px;
-      border-radius: 10px;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+    .container{
+      width:100%;
+      max-width:1000px;
+      background:var(--card);
+      padding:20px;
+      border-radius:12px;
+      box-shadow:0 6px 22px rgba(17,17,17,0.06);
     }
-    label {
-      display: block;
-      margin-top: 15px;
-      font-weight: bold;
+    header h1{ margin:0 0 6px 0; font-size:28px; }
+    header p{ margin:0 0 16px 0; color:var(--muted); font-size:15px; }
+
+    form{ display:grid; gap:20px; }
+    .row{ display:flex; gap:12px; }
+    .col{ flex:1; min-width:0; display:flex; flex-direction:column; gap:6px;}
+    label{ font-size:13px; color:#222; }
+    input[type="text"], input[type="number"], select, textarea{
+      border:1px solid #e2e6ef;
+      padding:10px 12px;
+      border-radius:8px;
+      font-size:16px;
+      background:#fff;
+      box-sizing:border-box;
     }
-    input, select, button {
-      width: 100%;
-      padding: 8px;
-      margin-top: 5px;
-      border-radius: 6px;
-      border: 1px solid #ccc;
-      box-sizing: border-box;
+    input[type="number"]{ width:150px; }
+    .small { font-size:12px; color:var(--muted); }
+
+    .radio-group{ display:flex; gap:20px; align-items:center; flex-wrap:wrap;}
+    .radio{
+      display:flex; align-items:center; gap:15px; padding:12px 20px;
+      border:1px solid #e6e9f2; border-radius:12px; cursor:pointer;
+      user-select:none;
     }
-    button {
-      background-color: #1a4a8a;
-      color: white;
-      border: none;
-      cursor: pointer;
-      font-size: 16px;
-      margin-top: 20px;
+    .radio input{ accent-color: var(--accent); transform:scale(1.05); }
+    button{
+      background:var(--accent); color:white; border:0; padding:12px 18px; border-radius:10px;
+      font-weight:600; cursor:pointer;
     }
-    button:hover {
-      background-color: #163a6a;
-    }
-    .msg {
-      display: none;
-      text-align: center;
-      margin-top: 15px;
-      padding: 10px;
-      border-radius: 5px;
-    }
-    .success {
-      background: #c6f6c6;
-      color: #27632a;
-    }
-    .error {
-      background: #ffd5d5;
-      color: #8b0000;
+    .note{ font-size:13px; color:var(--muted); margin-top:6px; }
+
+    .msg{ padding:10px 12px; border-radius:8px; font-weight:600; display:none; }
+    .msg.success{ background:#e6fbf1; color:var(--success); border:1px solid rgba(11,158,90,0.12); display:block; }
+    .msg.error{ background:#fff2f0; color:#b02a37; border:1px solid rgba(176,42,55,0.08); display:block; }
+
+    @media (max-width:700px){
+      .row{ flex-direction:column; }
+      input[type="number"]{ width:100%; }
     }
   </style>
 </head>
 <body>
-  <h1>Registo de Consumo de Caixas</h1>
+  <div class="container">
+    <header>
+      <h1>Registo de Consumo de Caixas</h1>
       <p>Preenche este formulário sempre que usares caixas. Os dados serão guardados automaticamente no Google Sheets.</p>
     </header>
 
@@ -395,3 +405,4 @@
   </script>
 </body>
 </html>
+
